@@ -1,0 +1,52 @@
+﻿
+> thryv-landing@0.1.0 lint
+> eslint
+
+
+C:\Users\Arunav Ganguly\Desktop\thryv landing\thryv-landing\src\components\ConceptAnimation\ConceptAnimation.tsx
+  4:16  warning  'ScrollTrigger' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Arunav Ganguly\Desktop\thryv landing\thryv-landing\src\components\GravityFooter\FooterItem.tsx
+  19:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  53:17  warning  'e' is defined but never used             @typescript-eslint/no-unused-vars
+
+C:\Users\Arunav Ganguly\Desktop\thryv landing\thryv-landing\src\components\GravityFooter\GravityFooter.tsx
+  66:50  error  Error: Cannot access variable before it is declared
+
+`syncDOMToPhysics` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+C:\Users\Arunav Ganguly\Desktop\thryv landing\thryv-landing\src\components\GravityFooter\GravityFooter.tsx:66:50
+  64 |     }
+  65 |
+> 66 |     animFrameRef.current = requestAnimationFrame(syncDOMToPhysics);
+     |                                                  ^^^^^^^^^^^^^^^^ `syncDOMToPhysics` accessed before it is declared
+  67 |   }, []);
+  68 |
+  69 |   useEffect(() => {
+
+C:\Users\Arunav Ganguly\Desktop\thryv landing\thryv-landing\src\components\GravityFooter\GravityFooter.tsx:48:3
+  46 |   }, []);
+  47 |
+> 48 |   const syncDOMToPhysics = useCallback(() => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 49 |     const bodies = bodiesRef.current;
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 50 |     const elements = elementsRef.current;
+     ΓÇª
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 66 |     animFrameRef.current = requestAnimationFrame(syncDOMToPhysics);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 67 |   }, []);
+     | ^^^^^^^^^^ `syncDOMToPhysics` is declared here
+  68 |
+  69 |   useEffect(() => {
+  70 |     if (!gravityActive) return;  react-hooks/immutability
+
+C:\Users\Arunav Ganguly\Desktop\thryv landing\thryv-landing\src\components\Waitlist\WaitlistSection.tsx
+  4:16  warning  'ScrollTrigger' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\Arunav Ganguly\Desktop\thryv landing\thryv-landing\src\hooks\useHeroScrollTransition.ts
+  4:16  warning  'ScrollTrigger' is defined but never used  @typescript-eslint/no-unused-vars
+
+Γ£û 6 problems (2 errors, 4 warnings)
+

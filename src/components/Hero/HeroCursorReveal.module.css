@@ -1,0 +1,106 @@
+.hero-reveal-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--void);
+  cursor: crosshair;
+}
+
+.reveal-svg {
+  width: 90vw;
+  max-width: 1100px;
+  height: auto;
+  user-select: none;
+  pointer-events: none;
+  z-index: 5;
+  overflow: visible;
+}
+
+/* BASE TEXT: Crisp bright white, full opacity — always visible */
+.hero-text-base {
+  fill: #ffffff;
+  font-family: var(--font-cond);
+  font-weight: 900;
+  font-size: 260px;
+  letter-spacing: -0.01em;
+}
+
+/* FANCY TEXT: Revealed through the lens */
+.hero-text-fancy {
+  font-family: var(--font-cond);
+  font-weight: 900;
+  font-size: 260px;
+  letter-spacing: -0.01em;
+}
+
+/* Subtle ambient glow behind the text */
+.glow-ambient {
+  position: absolute;
+  width: 500px;
+  height: 300px;
+  background: radial-gradient(ellipse, rgba(200, 30, 30, 0.18) 0%, transparent 70%);
+  filter: blur(60px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-post-reveal {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  opacity: 0.8;
+}
+
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0.22em;
+  text-transform: lowercase;
+  color: var(--ice-mid);
+}
+
+.scroll-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.scroll-indicator span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--t3);
+}
+
+.scroll-arrow {
+  width: 14px;
+  height: 14px;
+  border-right: 1.5px solid var(--ice-mid);
+  border-bottom: 1.5px solid var(--ice-mid);
+  transform: rotate(45deg);
+  animation: bounce-arrow 2s ease-in-out infinite;
+}
+
+@keyframes bounce-arrow {
+  0%, 100% { transform: translateY(0) rotate(45deg); opacity: 0.5; }
+  50% { transform: translateY(8px) rotate(45deg); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+  .hero-text-base, .hero-text-fancy {
+    font-size: 130px;
+  }
+}

@@ -1,26 +1,138 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@200;300;400;600;700;800;900&family=Barlow:wght@300;400&family=DM+Mono:wght@300;400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap');
+
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* SURFACES — BLACK DEPTH STACK */
+  --void: #080808;
+  --overlay: #0a0a0a;
+  --card: #0d0d0d;
+  --grey: #111111;
+  --card2: #161616;
+  --border: #1a1a1a;
+  --divider: #2a2a2a;
+
+  /* CRIMSON GRADIENT — PRIMARY ACCENT */
+  --red: #E8002D;
+  --red-lo: #B3001B;
+  --red-hi: #FF375F;
+  --red-mid: #FF2D55;
+  --red-dim: rgba(232, 0, 45, 0.3);
+  --red-gh: rgba(232, 0, 45, 0.08);
+  --red-grad: linear-gradient(135deg, #B3001B 0%, #E8002D 40%, #FF2D55 75%, #FF375F 100%);
+
+  /* GOLD — MILESTONE ONLY */
+  --gold: #C99500;
+  --gold-dim: rgba(201, 149, 0, 0.45);
+  --gold-gh: rgba(201, 149, 0, 0.07);
+
+  /* TEXT — WARM ICE SCALE */
+  --ice: #E8F4F8;
+  --ice-mid: #AABCC4;
+  --ice-dim: rgba(232, 244, 248, 0.40);
+  --ice-gh: rgba(232, 244, 248, 0.06);
+  --t1: #F5F0EB;
+  --t2: rgba(245, 240, 235, 0.60);
+  --t3: rgba(245, 240, 235, 0.30);
+  --t4: rgba(245, 240, 235, 0.10);
+
+  /* HABIT SYSTEM — 6 FIXED COLOURS */
+  --h-workout: #FF2D55;
+  --h-steps: #3B82F6;
+  --h-sleep: #8B5CF6;
+  --h-nutrition: #10B981;
+  --h-hydration: #06B6D4;
+  --h-mind: #F59E0B;
+
+  /* TYPOGRAPHY */
+  --font-cond: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --font-eleg: 'Cormorant Garamond', Georgia, serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* BASE RESET */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--void);
+  color: var(--t1);
+  font-family: var(--font-body);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: var(--void);
+}
+
+/* DUAL REGISTER HEADLINE SYSTEM */
+.section-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4em;
+}
+
+.t-display {
+  font-family: var(--font-cond);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(36px, 5vw, 64px);
+  letter-spacing: -0.01em;
+  line-height: 0.87;
+  background: var(--red-grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.t-secondary {
+  font-family: var(--font-eleg);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(17px, 2.4vw, 32px);
+  letter-spacing: 0.02em;
+  color: var(--ice);
+}
+
+/* EYEBROW STYLE */
+.t-eyebrow {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ice-mid);
+}
+
+/* SCROLL INDICATOR */
+@keyframes bounce-arrow {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50% { transform: translateY(8px); opacity: 1; }
+}
+
+/* REDUCED MOTION */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* SELECTION */
+::selection {
+  background: var(--red-dim);
+  color: var(--ice);
 }
