@@ -44,11 +44,17 @@
   --h-hydration: #06B6D4;
   --h-mind: #F59E0B;
 
+  /* SCROLLYTELLING TOKENS */
+  --neon-lime: #DBFF3D;
+  --bg-dark: var(--void);
+  --text-white: var(--t1);
+
   /* TYPOGRAPHY */
   --font-cond: 'Barlow Condensed', sans-serif;
   --font-body: 'Barlow', sans-serif;
   --font-mono: 'DM Mono', monospace;
   --font-eleg: 'Cormorant Garamond', Georgia, serif;
+  --font-primary: var(--font-body);
 }
 
 /* BASE RESET */

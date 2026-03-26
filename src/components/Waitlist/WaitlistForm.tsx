@@ -55,35 +55,48 @@ export default function WaitlistForm() {
       style={{
         display: "flex",
         flexDirection: "column",
-        gap: "1rem",
+        gap: "1.2rem",
         width: "100%",
-        maxWidth: "440px",
+        maxWidth: "480px",
+        padding: "2.5rem",
+        background: "rgba(255, 255, 255, 0.03)",
+        backdropFilter: "blur(20px)",
+        border: "1px solid rgba(255, 255, 255, 0.08)",
+        borderRadius: "24px",
+        boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)",
       }}
     >
       <div style={{ position: "relative" }}>
         <input
           {...register("email")}
           type="email"
-          placeholder="your@email.com"
+          placeholder="ENTER YOUR EMAIL"
           autoComplete="email"
           aria-label="Email address"
           style={{
             width: "100%",
-            padding: "14px 18px",
-            fontSize: "16px",
-            fontFamily: "var(--font-body)",
-            color: "var(--ice)",
-            background: "var(--card)",
-            border: `0.5px solid ${errors.email ? "var(--red)" : "var(--divider)"}`,
-            borderRadius: "10px",
+            padding: "18px 24px",
+            fontSize: "13px",
+            fontFamily: "var(--font-mono)",
+            letterSpacing: "0.1em",
+            color: "#fff",
+            background: "rgba(255, 255, 255, 0.04)",
+            border: `1px solid ${errors.email ? "rgba(232, 0, 45, 0.5)" : "rgba(255, 255, 255, 0.1)"}`,
+            borderRadius: "12px",
             outline: "none",
-            transition: "border-color 0.3s ease",
+            transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
           }}
           onFocus={(e) => {
-            if (!errors.email) e.target.style.borderColor = "var(--red)";
+            if (!errors.email) {
+              e.target.style.borderColor = "rgba(255, 255, 255, 0.3)";
+              e.target.style.background = "rgba(255, 255, 255, 0.07)";
+            }
           }}
           onBlur={(e) => {
-            if (!errors.email) e.target.style.borderColor = "var(--divider)";
+            if (!errors.email) {
+              e.target.style.borderColor = "rgba(255, 255, 255, 0.1)";
+              e.target.style.background = "rgba(255, 255, 255, 0.04)";
+            }
           }}
         />
         {errors.email && (
@@ -91,9 +104,11 @@ export default function WaitlistForm() {
             style={{
               color: "var(--red-mid)",
               fontFamily: "var(--font-mono)",
-              fontSize: "11px",
+              fontSize: "10px",
               letterSpacing: "0.06em",
-              marginTop: "6px",
+              marginTop: "8px",
+              textTransform: "uppercase",
+              paddingLeft: "4px"
             }}
           >
             {errors.email.message}
@@ -105,41 +120,42 @@ export default function WaitlistForm() {
         type="submit"
         disabled={loading}
         style={{
-          padding: "14px 28px",
-          fontSize: "14px",
+          width: "100%",
+          padding: "18px 24px",
+          fontSize: "13px",
           fontFamily: "var(--font-cond)",
-          fontWeight: 700,
+          fontWeight: 800,
           textTransform: "uppercase",
-          letterSpacing: "0.08em",
+          letterSpacing: "0.15em",
           color: "#fff",
-          background: "var(--red-grad)",
+          background: loading ? "rgba(255, 255, 255, 0.1)" : "var(--red-grad)",
           border: "none",
-          borderRadius: "10px",
+          borderRadius: "12px",
           cursor: loading ? "wait" : "pointer",
-          transition: "transform 0.2s ease, box-shadow 0.2s ease",
-          boxShadow: "0 4px 20px rgba(232, 0, 45, 0.3)",
-          opacity: loading ? 0.7 : 1,
+          transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+          boxShadow: loading ? "none" : "0 8px 16px rgba(232, 0, 45, 0.25)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          gap: "0.5rem",
+          gap: "0.8rem",
+          position: "relative",
+          overflow: "hidden"
         }}
         onMouseEnter={(e) => {
           if (!loading) {
-            e.currentTarget.style.transform = "translateY(-1px)";
-            e.currentTarget.style.boxShadow =
-              "0 6px 28px rgba(232, 0, 45, 0.4)";
+            e.currentTarget.style.transform = "scale(1.02)";
+            e.currentTarget.style.boxShadow = "0 12px 24px rgba(232, 0, 45, 0.35)";
           }
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "translateY(0)";
-          e.currentTarget.style.boxShadow = "0 4px 20px rgba(232, 0, 45, 0.3)";
+          e.currentTarget.style.transform = "scale(1)";
+          e.currentTarget.style.boxShadow = loading ? "none" : "0 8px 16px rgba(232, 0, 45, 0.25)";
         }}
       >
         {loading && (
           <svg
-            width="16"
-            height="16"
+            width="14"
+            height="14"
             viewBox="0 0 24 24"
             fill="none"
             style={{ animation: "spin 1s linear infinite" }}
@@ -149,15 +165,15 @@ export default function WaitlistForm() {
               cy="12"
               r="10"
               stroke="white"
-              strokeWidth="2"
-              strokeDasharray="60"
-              strokeDashoffset="20"
+              strokeWidth="3"
+              strokeDasharray="45"
+              strokeDashoffset="15"
               strokeLinecap="round"
             />
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
           </svg>
         )}
-        {loading ? "SUBMITTING..." : "GET EARLY ACCESS"}
+        {loading ? "PROCESSING..." : "GET EARLY ACCESS"}
       </button>
 
       {error && (
@@ -165,9 +181,10 @@ export default function WaitlistForm() {
           style={{
             color: "var(--red-mid)",
             fontFamily: "var(--font-mono)",
-            fontSize: "11px",
+            fontSize: "10px",
             letterSpacing: "0.06em",
             textAlign: "center",
+            textTransform: "uppercase"
           }}
         >
           {error}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import Matter from "matter-js";
 import FooterItem, { FooterItemData } from "./FooterItem";
 
@@ -32,12 +32,12 @@ export default function GravityFooter() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.2) {
             setGravityActive(true);
           }
         });
       },
-      { threshold: 0.5 }
+      { threshold: 0.2 }
     );
 
     observer.observe(section);
@@ -49,50 +49,22 @@ export default function GravityFooter() {
     const container = containerRef.current;
     if (!container) return;
 
-    const syncDOMToPhysics = () => {
-      const bodies = bodiesRef.current;
-      const elements = elementsRef.current;
-
-      for (let i = 0; i < bodies.length; i++) {
-        const body = bodies[i];
-        const el = elements[i];
-        if (!el || !body) continue;
-        
-        const width = footerItems[i].width;
-        const height = footerItems[i].height;
-
-        el.style.position = "absolute";
-        el.style.left = `${body.position.x - width / 2}px`;
-        el.style.top = `${body.position.y - height / 2}px`;
-        el.style.transform = `rotate(${body.angle}rad)`;
-      }
-
-      animFrameRef.current = requestAnimationFrame(syncDOMToPhysics);
-    };
-
     const rect = container.getBoundingClientRect();
     const width = rect.width;
     const height = rect.height;
 
     const engine = Matter.Engine.create({
-      gravity: { x: 0, y: 1, scale: 0.001 },
+      gravity: { x: 0, y: 1.5, scale: 0.001 },
+      positionIterations: 20,
     });
     engineRef.current = engine;
 
-    const wallThickness = 60;
+    const wallThick = 5000;
     const walls = [
-      Matter.Bodies.rectangle(width / 2, height + wallThickness / 2, width + 200, wallThickness, {
-        isStatic: true,
-        render: { visible: false },
-      }),
-      Matter.Bodies.rectangle(-wallThickness / 2, height / 2, wallThickness, height * 2, {
-        isStatic: true,
-        render: { visible: false },
-      }),
-      Matter.Bodies.rectangle(width + wallThickness / 2, height / 2, wallThickness, height * 2, {
-        isStatic: true,
-        render: { visible: false },
-      }),
+      Matter.Bodies.rectangle(width / 2, height + wallThick / 2, width * 10, wallThick, { isStatic: true }),
+      Matter.Bodies.rectangle(-wallThick / 2, height / 2, wallThick, height * 10, { isStatic: true }),
+      Matter.Bodies.rectangle(width + wallThick / 2, height / 2, wallThick, height * 10, { isStatic: true }),
+      Matter.Bodies.rectangle(width / 2, -wallThick / 2 - 1000, width * 10, wallThick, { isStatic: true })
     ];
 
     Matter.Composite.add(engine.world, walls);
@@ -103,55 +75,102 @@ export default function GravityFooter() {
     for (let i = 0; i < footerItems.length; i++) {
       const el = elements[i];
       if (!el) continue;
-
       const elRect = el.getBoundingClientRect();
       const x = elRect.left - rect.left + elRect.width / 2;
       const y = elRect.top - rect.top + elRect.height / 2;
-
       const body = Matter.Bodies.rectangle(x, y, elRect.width, elRect.height, {
-        restitution: 0.4,
-        friction: 0.3,
-        frictionAir: 0.01,
-        density: 0.002,
-        chamfer: undefined, // sharp corners
+        restitution: 0.3,
+        friction: 0.1,
+        frictionAir: 0.04,
+        density: 0.005,
       });
-
       newBodies.push(body);
     }
 
     bodiesRef.current = newBodies;
     Matter.Composite.add(engine.world, newBodies);
 
+    // CORE SCROLL FIX: Don't let Matter bind its own listeners to the container
+    // We create the mouse object with an empty element first, then manually sync it
     const mouse = Matter.Mouse.create(container);
+    
+    // Remove ALL listeners from mouse.element that Matter.js adds
+    // This includes wheel and touchstart that block scrolling
+    // @ts-ignore
+    container.removeEventListener("wheel", mouse.mousewheel);
+    // @ts-ignore
+    container.removeEventListener("mousewheel", mouse.mousewheel);
+    // @ts-ignore
+    container.removeEventListener("DOMMouseScroll", mouse.mousewheel);
+    // @ts-ignore
+    container.removeEventListener("touchstart", mouse.mousedown);
+    // @ts-ignore
+    container.removeEventListener("touchmove", mouse.mousemove);
+    // @ts-ignore
+    container.removeEventListener("touchend", mouse.mouseup);
+
+    // MANUALLY RE-BIND ONLY WHAT WE NEED (Without preventDefault on scroll)
+    const handlePointerDown = (e: MouseEvent | TouchEvent) => {
+      // @ts-ignore
+      mouse.mousedown(e);
+    };
+    const handlePointerMove = (e: MouseEvent | TouchEvent) => {
+      // @ts-ignore
+      mouse.mousemove(e);
+    };
+    const handlePointerUp = (e: MouseEvent | TouchEvent) => {
+      // @ts-ignore
+      mouse.mouseup(e);
+    };
+
+    container.addEventListener("mousedown", handlePointerDown);
+    container.addEventListener("mousemove", handlePointerMove);
+    window.addEventListener("mouseup", handlePointerUp);
+    container.addEventListener("touchstart", handlePointerDown, { passive: true });
+    container.addEventListener("touchmove", handlePointerMove, { passive: true });
+    container.addEventListener("touchend", handlePointerUp, { passive: true });
+
     const mouseConstraint = Matter.MouseConstraint.create(engine, {
       mouse: mouse,
-      constraint: {
-        stiffness: 0.2,
-        render: { visible: false },
-      },
+      constraint: { stiffness: 0.1, render: { visible: false } },
     });
+    
     Matter.Composite.add(engine.world, mouseConstraint);
-
-    mouseConstraint.mouse.element.removeEventListener(
-      "mousewheel",
-      (mouseConstraint.mouse as unknown as Record<string, EventListener>).mousewheel
-    );
-    mouseConstraint.mouse.element.removeEventListener(
-      "DOMMouseScroll",
-      (mouseConstraint.mouse as unknown as Record<string, EventListener>).mousewheel
-    );
 
     const runner = Matter.Runner.create();
     runnerRef.current = runner;
     Matter.Runner.run(runner, engine);
 
+    const syncDOMToPhysics = () => {
+      const bodies = bodiesRef.current;
+      const elements = elementsRef.current;
+      for (let i = 0; i < bodies.length; i++) {
+        const body = bodies[i];
+        const el = elements[i];
+        if (!el || !body) continue;
+        el.style.position = "absolute";
+        el.style.left = `${body.position.x - footerItems[i].width / 2}px`;
+        el.style.top = `${body.position.y - footerItems[i].height / 2}px`;
+        el.style.transform = `rotate(${body.angle}rad)`;
+      }
+      animFrameRef.current = requestAnimationFrame(syncDOMToPhysics);
+    };
+
     animFrameRef.current = requestAnimationFrame(syncDOMToPhysics);
+
+    container.style.touchAction = "pan-y";
 
     return () => {
       cancelAnimationFrame(animFrameRef.current);
       if (runnerRef.current) Matter.Runner.stop(runnerRef.current);
       if (engineRef.current) Matter.Engine.clear(engineRef.current);
       Matter.Composite.clear(engine.world, false);
+      container.removeEventListener("mousedown", handlePointerDown);
+      container.removeEventListener("mousemove", handlePointerMove);
+      window.removeEventListener("mouseup", handlePointerUp);
+      container.removeEventListener("touchstart", handlePointerDown);
+      container.removeEventListener("touchmove", handlePointerMove);
+      container.removeEventListener("touchend", handlePointerUp);
     };
   }, [gravityActive]);
 
@@ -162,17 +181,15 @@ export default function GravityFooter() {
       style={{
         position: "relative",
         width: "100%",
-        minHeight: "80vh",
-        padding: "4rem 2rem 2rem",
+        minHeight: "100vh",
+        padding: "8rem 2rem 0",
         background: "var(--void)",
         borderTop: "1px solid var(--border)",
         overflow: "hidden",
       }}
     >
-      <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-        <span className="t-eyebrow" style={{ marginBottom: "1rem", display: "block" }}>
-          THE END.
-        </span>
+      <div style={{ textAlign: "center", marginBottom: "4rem", pointerEvents: "none" }}>
+        <span className="t-eyebrow" style={{ marginBottom: "1rem", display: "block" }}>THE END.</span>
         <div className="section-title" style={{ textAlign: "center" }}>
           <span className="t-display">READY TO EXPLORE?</span>
         </div>
@@ -183,25 +200,24 @@ export default function GravityFooter() {
         style={{
           position: "relative",
           width: "100%",
-          maxWidth: "900px",
+          maxWidth: "1100px",
           margin: "0 auto",
           minHeight: "500px",
           display: "flex",
           flexWrap: "wrap",
-          gap: "1rem",
+          gap: "1.5rem",
           justifyContent: "center",
           alignItems: "center",
+          paddingBottom: "150px"
         }}
       >
         {footerItems.map((item, i) => (
           <div
             key={item.id}
-            ref={(el) => {
-              elementsRef.current[i] = el;
-            }}
+            ref={(el) => { elementsRef.current[i] = el; }}
             style={{
-              zIndex: 4,
-              transition: gravityActive ? "none" : "transform 0.3s ease",
+              zIndex: 10,
+              transition: gravityActive ? "none" : "transform 0.5s cubic-bezier(0.2, 0, 0, 1)",
             }}
           >
             <FooterItem item={item} />

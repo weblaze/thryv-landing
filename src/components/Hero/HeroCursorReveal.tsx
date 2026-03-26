@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useCursorLens } from "@/hooks/useCursorLens";
 import styles from "./HeroCursorReveal.module.css";
 
@@ -10,9 +10,54 @@ export default function HeroCursorReveal() {
 
   const textContent = "THRYV";
   const viewBox = "0 0 1200 400";
+  const [redactedText, setRedactedText] = useState<(string | React.ReactNode)[]>(textContent.split(""));
+  const [isMobile, setIsMobile] = useState(false);
+
+  // ─────────────────────────────────────────────────────
+  // 1. RESPONSIVE LIFECYCLE MANAGEMENT
+  // ─────────────────────────────────────────────────────
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 768px)");
+    const handler = (e: MediaQueryListEvent | MediaQueryList) => setIsMobile(e.matches);
+    
+    setIsMobile(mql.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
+
+  // ─────────────────────────────────────────────────────
+  // 2. DYNAMIC TYPOGRAPHIC REDACTION (MOBILE ONLY)
+  // ─────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!isMobile) {
+      setRedactedText(textContent.split(""));
+      return;
+    }
+
+    const intervalId = setInterval(() => {
+      const chars = textContent.split("");
+      const numToReplace = Math.floor(Math.random() * 3) + 1; // 1 to 3 letters
+      const indicesToReplace = new Set<number>();
+
+      while (indicesToReplace.size < numToReplace && indicesToReplace.size < chars.length) {
+        indicesToReplace.add(Math.floor(Math.random() * chars.length));
+      }
+
+      setRedactedText(
+        chars.map((char, i) => 
+          indicesToReplace.has(i) ? (
+            <span key={i} className={styles["redact-slash"]}>/</span>
+          ) : (
+            char
+          )
+        )
+      );
+    }, 700); // Between 600ms and 800ms
+
+    return () => clearInterval(intervalId);
+  }, [isMobile, textContent]);
 
   // All 6 nodes for the liquid blob — mask, inverse, AND rim all share the same radii
-  // This makes the rim deform organically with the liquid, not stay a perfect circle
   const radii = [120, 104, 88, 74, 62, 50];
 
   return (
@@ -21,6 +66,12 @@ export default function HeroCursorReveal() {
       className={styles["hero-reveal-container"]}
       aria-label="THRYV — move. earn. belong."
     >
+      {/* MOBILE REDACTION FALLBACK */}
+      <div className={styles["mobile-redaction-wrapper"]}>
+        <h1 id="mobile-redaction-text" className={styles["mobile-redaction-text"]}>
+          {redactedText}
+        </h1>
+      </div>
       <svg className={styles["reveal-svg"]} viewBox={viewBox} preserveAspectRatio="xMidYMid meet">
         <defs>
 

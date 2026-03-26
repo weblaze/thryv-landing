@@ -1,0 +1,107 @@
+.waitlist-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--void);
+}
+
+.blur-text-wrapper {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.base-h1 {
+  position: absolute;
+  font-family: var(--font-cond);
+  font-weight: 900;
+  font-size: 18vw;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  text-transform: uppercase;
+  margin: 0;
+  color: #fff;
+  user-select: none;
+}
+
+.layer-blurred {
+  filter: blur(25px);
+  opacity: 0.7;
+}
+
+.layer-sharp {
+  z-index: 2;
+  will-change: mask-image;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black var(--focus-y-start),
+    transparent var(--focus-y-end),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    black 0%,
+    black var(--focus-y-start),
+    transparent var(--focus-y-end),
+    transparent 100%
+  );
+}
+
+.waitlist-form-container {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 500px;
+  padding: 0 2rem;
+}
+
+.waitlist-eyebrow {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ice-mid);
+  opacity: 0.8;
+}
+
+/* MOBILE FALLBACK */
+@media (max-width: 768px) {
+  .base-h1 {
+    font-size: 15vw;
+    white-space: normal;
+    padding: 0 1rem;
+    width: 100%;
+  }
+
+  .layer-sharp {
+    animation: breathe 5s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes breathe {
+  0% {
+    --focus-y-start: 10%;
+    --focus-y-end: 30%;
+  }
+  100% {
+    --focus-y-start: 70%;
+    --focus-y-end: 90%;
+  }
+}
