@@ -42,17 +42,17 @@ const FutureVision = () => {
             top: "50vh",
             opacity: 1,
             rotateX: 0,
-            scale: 1,
+            scale: 0.3, // Scale way down as it hits the center
             filter: "blur(0px)",
             duration: 0.4,
-            ease: "power2.out",
-            stagger: 0.05 // Tiny stagger for organic feel but mostly together
+            ease: "power2.inOut",
+            stagger: 0.05
           }
         );
 
         // 2. Merge effect: 3 items vanish, ALL IN ONE appears
         tl.to(itemsRef.current, {
-          scale: 0.5,
+          scale: 0.1,
           opacity: 0,
           filter: "blur(20px)",
           duration: 0.2,
@@ -62,7 +62,7 @@ const FutureVision = () => {
         tl.fromTo(mergedRef.current,
           {
             top: "50vh",
-            scale: 2,
+            scale: 0.2,
             opacity: 0,
             filter: "blur(20px)"
           },
