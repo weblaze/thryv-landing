@@ -34,56 +34,56 @@ const FutureVision = () => {
           { 
             top: "-30vh",
             opacity: 0,
-            rotateX: -30,
-            scale: 1.5,
-            filter: "blur(10px)"
+            rotateX: -45,
+            scale: 2.5,
+            filter: "blur(40px)"
           },
           {
             top: "50vh",
             opacity: 1,
             rotateX: 0,
-            scale: 0.3, // Scale way down as it hits the center
+            scale: 0.1, // Scale down to enter the hole
             filter: "blur(0px)",
-            duration: 0.4,
+            duration: 0.5,
             ease: "power2.inOut",
-            stagger: 0.05
+            stagger: 0.03
           }
         );
 
         // 2. Merge effect: 3 items vanish, ALL IN ONE appears
         tl.to(itemsRef.current, {
-          scale: 0.1,
+          scale: 0,
           opacity: 0,
-          filter: "blur(20px)",
+          filter: "blur(30px)",
           duration: 0.2,
           ease: "power2.in"
-        }, 0.4);
+        }, 0.45);
 
         tl.fromTo(mergedRef.current,
           {
             top: "50vh",
-            scale: 0.2,
+            scale: 0.05,
             opacity: 0,
-            filter: "blur(20px)"
+            filter: "blur(30px)"
           },
           {
             scale: 1,
             opacity: 1,
             filter: "blur(0px)",
-            duration: 0.3,
-            ease: "back.out(1.7)"
+            duration: 0.4,
+            ease: "back.out(1.2)"
           },
-          0.45 // Start slightly after the vanish begins
+          0.5
         );
 
         // 3. ALL IN ONE drops out
         tl.to(mergedRef.current, {
-          top: "125vh",
-          rotateX: 20,
-          scale: 0.8,
-          duration: 0.4,
+          top: "130vh",
+          rotateX: 30,
+          scale: 0.7,
+          duration: 0.5,
           ease: "power2.in"
-        }, 0.75);
+        }, 0.8);
       }
     }, sectionRef);
 

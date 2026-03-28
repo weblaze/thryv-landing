@@ -18,10 +18,6 @@ const XPPhilosophy = dynamic(
   () => import("@/components/XPPhilosophy/XPPhilosophy"),
   { ssr: false }
 );
-const ConceptAnimation = dynamic(
-  () => import("@/components/ConceptAnimation/ConceptAnimation"),
-  { ssr: false }
-);
 const FutureVision = dynamic(
   () => import("@/components/FutureVision/FutureVision"),
   { ssr: false }
@@ -42,7 +38,6 @@ export default function Home() {
       <FlywheelScrollytelling />
       <LeagueSpotlight />
       <XPPhilosophy />
-      <ConceptAnimation />
       <FutureVision />
       <WaitlistSection />
       <GravityFooter />
