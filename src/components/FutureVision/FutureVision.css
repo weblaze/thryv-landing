@@ -4,14 +4,26 @@
   position: relative;
   height: 400vh;
   background: var(--bg-dark);
-  overflow: hidden;
 }
 
-.sticky-hub-layer {
+.sticky-container {
   position: sticky;
   top: 0;
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1000px; /* Enable 3D depth */
+}
+
+.sticky-hub-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -23,7 +35,7 @@
   width: 60vw;
   max-width: 600px;
   height: auto;
-  filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.9));
+  filter: drop-shadow(0 40px 80px rgba(0, 0, 0, 1));
 }
 
 .text-waterfall {
@@ -39,10 +51,14 @@
 .roadmap-item {
   position: absolute;
   left: 50%;
-  top: -20vh;
+  top: -30vh; /* Start further up */
   transform: translateX(-50%);
   width: 100%;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .roadmap-item h2 {

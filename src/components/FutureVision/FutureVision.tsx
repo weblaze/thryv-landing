@@ -31,31 +31,52 @@ const FutureVision = () => {
         itemsRef.current.forEach((item, index) => {
           if (!item) return;
 
-          // Sequential fall: Item 1 starts, then Item 2 starts when 1 is halfway, etc.
-          // Total duration is 400vh, we have 3 items.
-          // Let's map them to start at different points in the timeline.
+          const startTime = index * 0.5;
           
-          const startTime = index * 0.5; // Staggered start
-          
-          tl.to(item, {
-            top: "120vh",
-            duration: 1,
-            ease: "none",
-            onUpdate: function() {
-                // "Processing" effect at 50vh mark
-                // Top goes from -20vh to 120vh (total 140vh)
-                // Center point (50vh) is at (50 - (-20)) / 140 = 70/140 = 0.5 progress of THIS item
+          tl.fromTo(item, 
+            { 
+              top: "-50vh",
+              opacity: 0,
+              rotateX: -20,
+              scale: 0.8
+            },
+            {
+              top: "120vh",
+              opacity: 1,
+              duration: 1,
+              ease: "none",
+              onUpdate: function() {
                 const progress = this.progress();
-                if (progress > 0.4 && progress < 0.6) {
-                    const localProgress = (progress - 0.4) / 0.2; // 0 to 1 over the center
-                    const scale = 1 + Math.sin(localProgress * Math.PI) * 0.15;
-                    const rotateX = Math.sin(localProgress * Math.PI) * 15;
-                    gsap.set(item, { scale: scale, rotateX: rotateX });
+                
+                // Fade out at the bottom
+                if (progress > 0.8) {
+                  gsap.set(item, { opacity: (1 - progress) / 0.2 });
+                } else if (progress < 0.2) {
+                  gsap.set(item, { opacity: progress / 0.2 });
                 } else {
-                    gsap.set(item, { scale: 1, rotateX: 0 });
+                  gsap.set(item, { opacity: 1 });
                 }
-            }
-          }, startTime);
+
+                // Processing effect in the middle (0.4 to 0.6)
+                if (progress > 0.35 && progress < 0.65) {
+                    const localProgress = (progress - 0.35) / 0.3;
+                    const bulge = Math.sin(localProgress * Math.PI);
+                    gsap.set(item, { 
+                      scale: 1 + bulge * 0.2, 
+                      rotateX: bulge * 20 - 10,
+                      filter: `brightness(${1 + bulge * 0.5})`
+                    });
+                } else {
+                    gsap.set(item, { 
+                      scale: 0.9, 
+                      rotateX: -10,
+                      filter: "brightness(1)"
+                    });
+                }
+              }
+            }, 
+            startTime
+          );
         });
       }
     }, sectionRef);
@@ -71,29 +92,31 @@ const FutureVision = () => {
 
   return (
     <section id="future-vision" ref={sectionRef} className="relative">
-      <div className="text-waterfall">
-        {roadmapItems.map((item, index) => (
-          <div
-            key={item}
-            className="roadmap-item"
-            ref={(el) => {
-              itemsRef.current[index] = el;
-            }}
-          >
-            <h2>{item}</h2>
-          </div>
-        ))}
-      </div>
+      <div className="sticky-container">
+        <div className="text-waterfall">
+          {roadmapItems.map((item, index) => (
+            <div
+              key={item}
+              className="roadmap-item"
+              ref={(el) => {
+                itemsRef.current[index] = el;
+              }}
+            >
+              <h2>{item}</h2>
+            </div>
+          ))}
+        </div>
 
-      <div className="sticky-hub-layer">
-        <div className="relative w-[60vw] max-w-[600px] aspect-square">
-          <Image
-            src="/barbell-hub.png"
-            alt="Thryv Core"
-            fill
-            className="hub-asset object-contain"
-            priority
-          />
+        <div className="sticky-hub-layer">
+          <div className="relative w-[60vw] max-w-[600px] aspect-square">
+            <Image
+              src="/barbell-hub.png"
+              alt="Thryv Core"
+              fill
+              className="hub-asset object-contain"
+              priority
+            />
+          </div>
         </div>
       </div>
     </section>
