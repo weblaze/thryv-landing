@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+#future-vision {
+  position: relative;
+  height: 400vh;
+  background: var(--bg-dark);
+  overflow: hidden;
+}
+
+.sticky-hub-layer {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.hub-asset {
+  width: 60vw;
+  max-width: 600px;
+  height: auto;
+  filter: drop-shadow(0 30px 50px rgba(0, 0, 0, 0.9));
+}
+
+.text-waterfall {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.roadmap-item {
+  position: absolute;
+  left: 50%;
+  top: -20vh;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+}
+
+.roadmap-item h2 {
+  font-family: var(--font-cond);
+  font-size: 8vw;
+  font-weight: 900;
+  color: var(--neon-lime);
+  white-space: nowrap;
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1;
+}
+
+/* Mobile Fallback */
+@media (max-width: 768px) {
+  #future-vision {
+    height: auto;
+    padding: 10vh 0;
+    overflow: visible;
+  }
+
+  .sticky-hub-layer {
+    position: relative;
+    top: auto;
+    height: auto;
+    margin-bottom: 5vh;
+  }
+
+  .hub-asset {
+    width: 80vw;
+  }
+
+  .text-waterfall {
+    position: relative;
+    top: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4vh;
+    z-index: 30; /* Bring above for readability if needed, but user said stack normally */
+  }
+
+  .roadmap-item {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+  }
+
+  .roadmap-item h2 {
+    font-size: 12vw;
+  }
+}

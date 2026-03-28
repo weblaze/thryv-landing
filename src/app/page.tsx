@@ -22,6 +22,10 @@ const ConceptAnimation = dynamic(
   () => import("@/components/ConceptAnimation/ConceptAnimation"),
   { ssr: false }
 );
+const FutureVision = dynamic(
+  () => import("@/components/FutureVision/FutureVision"),
+  { ssr: false }
+);
 const WaitlistSection = dynamic(
   () => import("@/components/Waitlist/WaitlistSection"),
   { ssr: false }
@@ -39,6 +43,7 @@ export default function Home() {
       <LeagueSpotlight />
       <XPPhilosophy />
       <ConceptAnimation />
+      <FutureVision />
       <WaitlistSection />
       <GravityFooter />
     </main>
