@@ -13,6 +13,7 @@ if (typeof window !== "undefined") {
 const FutureVision = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const mergedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let ctx = gsap.context(() => {
@@ -28,56 +29,61 @@ const FutureVision = () => {
           },
         });
 
-        itemsRef.current.forEach((item, index) => {
-          if (!item) return;
+        // 1. All items come in together to the center
+        tl.fromTo(itemsRef.current, 
+          { 
+            top: "-30vh",
+            opacity: 0,
+            rotateX: -30,
+            scale: 1.5,
+            filter: "blur(10px)"
+          },
+          {
+            top: "50vh",
+            opacity: 1,
+            rotateX: 0,
+            scale: 1,
+            filter: "blur(0px)",
+            duration: 0.4,
+            ease: "power2.out",
+            stagger: 0.05 // Tiny stagger for organic feel but mostly together
+          }
+        );
 
-          const startTime = index * 0.5;
-          
-          tl.fromTo(item, 
-            { 
-              top: "-50vh",
-              opacity: 0,
-              rotateX: -20,
-              scale: 0.8
-            },
-            {
-              top: "120vh",
-              opacity: 1,
-              duration: 1,
-              ease: "none",
-              onUpdate: function() {
-                const progress = this.progress();
-                
-                // Fade out at the bottom
-                if (progress > 0.8) {
-                  gsap.set(item, { opacity: (1 - progress) / 0.2 });
-                } else if (progress < 0.2) {
-                  gsap.set(item, { opacity: progress / 0.2 });
-                } else {
-                  gsap.set(item, { opacity: 1 });
-                }
+        // 2. Merge effect: 3 items vanish, ALL IN ONE appears
+        tl.to(itemsRef.current, {
+          scale: 0.5,
+          opacity: 0,
+          filter: "blur(20px)",
+          duration: 0.2,
+          ease: "power2.in"
+        }, 0.4);
 
-                // Processing effect in the middle (0.4 to 0.6)
-                if (progress > 0.35 && progress < 0.65) {
-                    const localProgress = (progress - 0.35) / 0.3;
-                    const bulge = Math.sin(localProgress * Math.PI);
-                    gsap.set(item, { 
-                      scale: 1 + bulge * 0.2, 
-                      rotateX: bulge * 20 - 10,
-                      filter: `brightness(${1 + bulge * 0.5})`
-                    });
-                } else {
-                    gsap.set(item, { 
-                      scale: 0.9, 
-                      rotateX: -10,
-                      filter: "brightness(1)"
-                    });
-                }
-              }
-            }, 
-            startTime
-          );
-        });
+        tl.fromTo(mergedRef.current,
+          {
+            top: "50vh",
+            scale: 2,
+            opacity: 0,
+            filter: "blur(20px)"
+          },
+          {
+            scale: 1,
+            opacity: 1,
+            filter: "blur(0px)",
+            duration: 0.3,
+            ease: "back.out(1.7)"
+          },
+          0.45 // Start slightly after the vanish begins
+        );
+
+        // 3. ALL IN ONE drops out
+        tl.to(mergedRef.current, {
+          top: "125vh",
+          rotateX: 20,
+          scale: 0.8,
+          duration: 0.4,
+          ease: "power2.in"
+        }, 0.75);
       }
     }, sectionRef);
 
@@ -105,6 +111,10 @@ const FutureVision = () => {
               <h2>{item}</h2>
             </div>
           ))}
+
+          <div className="merged-item" ref={mergedRef}>
+            <h2>ALL IN ONE</h2>
+          </div>
         </div>
 
         <div className="sticky-hub-layer">
